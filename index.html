@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>性功能影響因素 (加權版)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            padding: 2.5rem;
+            max-width: 900px; /* Increased max-width */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem; /* Space between main sections */
+        }
+        /* Styles for the section containers */
+        .section-container {
+            border-radius: 1.5rem;
+            padding: 2rem; /* Increased padding for sections */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .socio-economic-section {
+            background-color: #e0f2fe; /* Light blue */
+            border: 1px solid #90cdf4;
+        }
+        .physiological-section {
+            background-color: #d1fae5; /* Light green */
+            border: 1px solid #6ee7b7;
+        }
+        .psychological-section {
+            background-color: #ede9fe; /* Light purple */
+            border: 1px solid #c4b5fd;
+        }
+        .appearance-section {
+            background-color: #ffe4e6; /* Light pink/peach */
+            border: 1px solid #fda4af;
+        }
+
+        .factor-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding-bottom: 1.5rem; /* Increased padding for more separation */
+            margin-bottom: 1.5rem; /* Increased margin for more separation */
+        }
+        /* Add a stronger border between individual factor groups within a section */
+        .section-container .factor-group:not(:last-of-type) {
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1); /* Stronger separator */
+        }
+
+        .slider-container {
+            margin-bottom: 0.5rem;
+        }
+        .slider-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            background: #cbd5e1;
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+        /* Styling for the slider thumb (triangle/diamond shape and color) */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 0; /* No border-radius for diamond shape */
+            background: var(--thumb-color, #4f46e5); /* Use CSS variable for color */
+            cursor: grab;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease, transform 0.1s ease;
+            transform: rotate(45deg); /* Rotate to make it a diamond */
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 0; /* No border-radius for diamond shape */
+            background: var(--thumb-color, #4f46e5); /* Use CSS variable for color */
+            cursor: grab;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease, transform 0.1s ease;
+            transform: rotate(45deg); /* Rotate to make it a diamond */
+        }
+        input[type="range"]::-webkit-slider-thumb:hover,
+        input[type="range"]::-moz-range-thumb:hover {
+            /* Keep the same background color on hover, or slightly adjust if desired */
+            background: var(--thumb-color, #4f46e5);
+            transform: rotate(45deg) scale(1.1); /* Slightly enlarge on hover for feedback */
+        }
+
+        .result-box {
+            background-color: #e0f2fe;
+            border: 1px solid #90cdf4;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e40af;
+            margin-top: 2rem;
+        }
+        .comment-text {
+            font-size: 1.05rem; /* Increased font size for better readability */
+            color: #334155;
+            margin-top: 0.75rem;
+            line-height: 1.6; /* Slightly increased line height for readability */
+            text-align: left;
+        }
+        .intro-text {
+            text-align: left;
+        }
+        .recalculate-button {
+            background-color: #4f46e5;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 1.5rem;
+            display: inline-block; /* To center it */
+        }
+        .recalculate-button:hover {
+            background-color: #6366f1;
+        }
+
+        .scroll-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: #4f46e5;
+            color: white;
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: background-color 0.3s ease, opacity 0.3s ease;
+            opacity: 0; /* Hidden by default */
+            pointer-events: none; /* Do not block events when hidden */
+        }
+        .scroll-to-top.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .scroll-to-top:hover {
+            background-color: #6366f1;
+        }
+
+        /* Styling for the title box */
+        .title-box {
+            background: linear-gradient(to right, #e0f2fe, #d1fae5); /* Soft gradient background */
+            border: 2px solid #90cdf4; /* Blue border */
+            border-radius: 1.5rem; /* Rounded corners */
+            padding: 1.5rem 2.5rem; /* Generous padding */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+            margin-bottom: 2rem; /* Space below the title box */
+            text-align: center; /* Center the text inside */
+            max-width: fit-content; /* Make box fit content width */
+            margin-left: auto; /* Center the box */
+            margin-right: auto; /* Center the box */
+        }
+        .title-box h1 {
+            color: #1e40af; /* Dark blue text for contrast */
+            font-size: 2.5rem; /* Slightly larger font for main title */
+            line-height: 1.2; /* Adjust line height for multiline title */
+            margin: 0; /* Remove default h1 margin */
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            .result-box {
+                font-size: 1rem;
+            }
+            .comment-text {
+                font-size: 0.9rem; /* Adjusted for mobile */
+            }
+            .section-container {
+                padding: 1rem;
+            }
+            .scroll-to-top {
+                bottom: 1rem;
+                right: 1rem;
+                width: 2.5rem;
+                height: 2.5rem;
+                font-size: 1.2rem;
+            }
+            .title-box {
+                padding: 1rem 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            .title-box h1 {
+                font-size: 1.8rem; /* Adjust font size for smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Title Box -->
+        <div class="title-box">
+            <h1>
+                性功能影響因素<br>互動分析 (加權版)
+            </h1>
+        </div>
+
+        <p class="text-gray-600 intro-text mb-8">
+            本頁面旨在概念性地探討多種因素對性功能之潛在「感知影響」。
+            使用者可為各因素設定其「重要性權重」，以反映個人對該因素影響性功能感受之程度。
+            請注意，此模型為一<strong class="text-red-500">理論性示意模型</strong>，其建構不基於任何實證科學研究或醫學證據。
+            其主要目的為提供一互動式工具，促使使用者反思特定因素可能引發之心理壓力或信心變化，進而影響個體之主觀感受。
+            鑑於實際性功能受多重生理、心理及關係因素之複雜交互作用影響，本頁面所呈現之結果<strong class="text-red-500">不應被視為任何形式之醫學建議或診斷</strong>。
+            <strong class="text-red-500">本題目之設定可能存在偏頗，僅供些微學術探討與趣味參考，切勿當真。</strong>
+        </p>
+
+        <!-- Socio-economic Factors Section -->
+        <div class="section-container socio-economic-section">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">社會經濟因素</h2>
+            <div class="factor-group">
+                <div class="slider-container">
+                    <label for="stockMarket" class="slider-label">
+                        <span>股市表現 (0 = 非常差, 100 = 非常好)</span>
+                        <span id="stockMarketValue" class="text-sm text-gray-500">50</span>
+                    </label>
+                    <input type="range" id="stockMarket" min="0" max="100" value="50">
+                </div>
+                <div class="slider-container">
+                    <label for="stockMarketWeight" class="slider-label">
+                        <span>股市影響性權重 (0 = 不重要, 10 = 非常重要)</span>
+                        <span id="stockMarketWeightValue" class="text-sm text-gray-500">5</span>
+                    </label>
+                    <input type="range" id="stockMarketWeight" min="0" max="10" value="5">
+                </div>
+            </div>
+
+            <div class="factor-group">
+                <div class="slider-container">
+                    <label for="politics" class="slider-label">
+                        <span>政治穩定性 (0 = 非常不穩, 100 = 非常穩)</span>
+                        <span id="politicsValue" class="text-sm text-gray-500">50</span>
+                    </label>
+                    <input type="range" id="politics" min="0" max="100" value="50">
+                </div>
+                <div class="slider-container">
+                    <label for="politicsWeight" class="slider-label">
+                        <span>政治影響性權重 (0 = 不重要, 10 = 非常重要)</span>
+                        <span id="politicsWeightValue" class="text-sm text-gray-500">5</span>
+                    </label>
+                    <input type="range" id="politicsWeight" min="0" max="10" value="5">
+                </div>
+            </div>
+
+            <div class="factor-group">
+                <div class="slider-container">
+                    <label for="financialStatus" class="slider-label">
+                        <span>財力狀況 (0 = 非常差, 100 = 非常好)</span>
+                        <span id="financialStatusValue" class="text-sm text-gray-500">50</span>
+                    </label>
+                    <input type="range" id="financialStatus" min="0" max="100" value="50">
+                </div>
+                <div class="slider-container">
+                    <label for="financialStatusWeight" class="slider-label">
+                        <span>財力影響性權重 (0 = 不重要, 10 = 非常重要)</span>
+                        <span id="financialStatusWeightValue" class="text-sm text-gray-500">5</span>
+                    </label>
+                    <input type="range" id="financialStatusWeight" min="0" max="10" value="5">
+                </div>
+            </div>
+
+            <div class="factor-group">
+                <div class="slider-container">
+                    <label for="socialInfluence" class="slider-label">
+                        <span>社會影響力 (0 = 非常低, 100 = 非常高)</span>
+                        <span id="socialInfluenceValue" class="text-sm text-gray-500">50</span>
+                    </label>
+                    <input type="range" id="socialInfluence" min="0" max="100" value="50">
+                </div>
+                <div class="slider-container">
+                    <label for="socialInfluenceWeight" class="slider-label">
+                        <span>社會影響力權重 (0 = 不重要, 10 = 非常重要)</span>
+                        <span id="socialInfluenceWeightValue" class="text-sm text-gray-500">5</span>
+                    </label>
+                    <input type="range" id="socialInfluenceWeight" min="0" max="10" value="5">
+                </div>
+            </div>
+        </div>
+
+        <!-- Physiological/Medical Factors Section -->
+        <div class="section-container physiological-section">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">生理/醫學因素</h2>
+            <div class="factor-group">
+                <div class="slider-container">
+                    <label for="healthStatus" class="slider-label">
+                        <span>整體健康狀況 (0 = 非常差, 100 = 非常好)</span>
+                        <span id="healthStatusValue" class="text-sm text-gray-500">50</span>
+                    </label>
+                    <input type="range" id="healthStatus" min="0" max="100" value="50">
+                </div>
+                <div class="slider-container">
+                    <label for="healthStatusWeight" class="slider-label">
+                        <span>健康狀況影響性權重 (0 = 不重要, 10 = 非常重要)</span>
+                        <span id="healthStatusWeightValue" class="text-sm text-gray-500">5</span>
+                    </label>
+                    <input type="range" id="healthStatusWeight" min="0" max="10" value="5">
+                </div>
+            </div>
+
+            <div class="factor-group">
+                <div class="slider-container">
+                    <label for="lifestyle" class="slider-label">
+                        <span>生活習慣 (飲食、運動、睡眠、菸酒) (0 = 非常不健康, 100 = 非常健康)</span>
+                        <span id="lifestyleValue" class="text-sm text-gray-500">50</span>
+                    </label>
+                    <input type="range" id="lifestyle" min="0" max="100" value="50">
+                </div>
+                <div class="slider-container">
+                    <label for="lifestyleWeight" class="slider-label">
+                        <span>生活習慣影響性權重 (0 = 不重要, 10 = 非常重要)</span>
+                        <span id="lifestyleWeightValue" class="text-sm text-gray-500">5</span>
+                    </label>
+                    <input type="range" id="lifestyleWeight" min="0" max="10" value="5">
+                </div>
+            </div>
+        </div>
+
+        <!-- Psychological/Emotional Factors Section -->
+        <div class="section-container psychological-section">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">心理/情緒因素</h2>
+            <div class="factor-group">
+                <div class="slider-container">
+                    <label for="stressLevel" class="slider-label">
+                        <span>壓力水平 (0 = 非常高, 100 = 非常低)</span>
+                        <span id="stressLevelValue" class="text-sm text-gray-500">50</span>
+                    </label>
+                    <input type="range" id="stressLevel" min="0" max="100" value="50">
+                </div>
+                <div class="slider-container">
+                    <label for="stressLevelWeight" class="slider-label">
+                        <span>壓力水平影響性權重 (0 = 不重要, 10 = 非常重要)</span>
+                        <span id="stressLevelWeightValue" class="text-sm text-gray-500">5</span>
+                    </label>
+                    <input type="range" id="stressLevelWeight" min="0" max="10" value="5">
+                </div>
+            </div>
+
+            <div class="factor-group">
+                <div class="slider-container">
+                    <label for="relationshipQuality" class="slider-label">
+                        <span>伴侶關係品質 (0 = 非常差, 100 = 非常好)</span>
+                        <span id="relationshipQualityValue" class="text-sm text-gray-500">50</span>
+                    </label>
+                    <input type="range" id="relationshipQuality" min="0" max="100" value="50">
+                </div>
+                <div class="slider-container">
+                    <label for="relationshipQualityWeight" class="slider-label">
+                        <span>伴侶關係影響性權重 (0 = 不重要, 10 = 非常重要)</span>
+                        <span id="relationshipQualityWeightValue" class="text-sm text-gray-500">5</span>
+                    </label>
+                    <input type="range" id="relationshipQualityWeight" min="0" max="10" value="5">
+                </div>
+            </div>
+        </div>
+
+        <!-- Appearance Factors Section -->
+        <div class="section-container appearance-section">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">外貌因素</h2>
+            <div class="factor-group">
+                <div class="slider-container">
+                    <label for="attractiveness" class="slider-label">
+                        <span>外貌吸引力 (0 = 非常低, 100 = 非常高)</span>
+                        <span id="attractivenessValue" class="text-sm text-gray-500">50</span>
+                    </label>
+                    <input type="range" id="attractiveness" min="0" max="100" value="50">
+                </div>
+                <div class="slider-container">
+                    <label for="attractivenessWeight" class="slider-label">
+                        <span>外貌吸引力影響性權重 (0 = 不重要, 10 = 非常重要)</span>
+                        <span id="attractivenessWeightValue" class="text-sm text-gray-500">5</span>
+                    </label>
+                    <input type="range" id="attractivenessWeight" min="0" max="10" value="5">
+                </div>
+            </div>
+
+            <div class="factor-group">
+                <div class="slider-container">
+                    <label for="bodyBuild" class="slider-label">
+                        <span>身材健壯程度 (0 = 非常不佳, 100 = 非常健壯)</span>
+                        <span id="bodyBuildValue" class="text-sm text-gray-500">50</span>
+                    </label>
+                    <input type="range" id="bodyBuild" min="0" max="100" value="50">
+                </div>
+                <div class="slider-container">
+                    <label for="bodyBuildWeight" class="slider-label">
+                        <span>身材健壯程度影響性權重 (0 = 不重要, 10 = 非常重要)</span>
+                        <span id="bodyBuildWeightValue" class="text-sm text-gray-500">5</span>
+                    </label>
+                    <input type="range" id="bodyBuildWeight" min="0" max="10" value="5">
+                </div>
+            </div>
+        </div>
+
+        <!-- Result -->
+        <div class="result-box">
+            <p>您的性功能「感知影響」加權評分：<span id="sexualFunctionScore">50</span> / 100</p>
+            <p class="comment-text" id="sexualFunctionComment">
+                此分數為綜合您輸入的因素及其權重所得出的概念性評估。
+            </p>
+            <button id="recalculateButton" class="recalculate-button">重新評分</button>
+        </div>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <div id="scrollToTopBtn" class="scroll-to-top">
+        &#x2191; <!-- Up arrow character -->
+    </div>
+
+    <script>
+        // Define all factors and their corresponding elements
+        const factorsConfig = {
+            stockMarket: {
+                slider: 'stockMarket',
+                valueSpan: 'stockMarketValue',
+                weightSlider: 'stockMarketWeight',
+                weightValueSpan: 'stockMarketWeightValue',
+                name: '股市表現',
+                defaultValue: 50,
+                defaultWeight: 5
+            },
+            politics: {
+                slider: 'politics',
+                valueSpan: 'politicsValue',
+                weightSlider: 'politicsWeight',
+                weightValueSpan: 'politicsWeightValue',
+                name: '政治穩定性',
+                defaultValue: 50,
+                defaultWeight: 5
+            },
+            financialStatus: {
+                slider: 'financialStatus',
+                valueSpan: 'financialStatusValue',
+                weightSlider: 'financialStatusWeight',
+                weightValueSpan: 'financialStatusWeightValue',
+                name: '財力狀況',
+                defaultValue: 50,
+                defaultWeight: 5
+            },
+            socialInfluence: {
+                slider: 'socialInfluence',
+                valueSpan: 'socialInfluenceValue',
+                weightSlider: 'socialInfluenceWeight',
+                weightValueSpan: 'socialInfluenceWeightValue',
+                name: '社會影響力',
+                defaultValue: 50,
+                defaultWeight: 5
+            },
+            healthStatus: {
+                slider: 'healthStatus',
+                valueSpan: 'healthStatusValue',
+                weightSlider: 'healthStatusWeight',
+                weightValueSpan: 'healthStatusWeightValue',
+                name: '整體健康狀況',
+                defaultValue: 50,
+                defaultWeight: 5 // Changed from 8 to 5
+            },
+            lifestyle: {
+                slider: 'lifestyle',
+                valueSpan: 'lifestyleValue',
+                weightSlider: 'lifestyleWeight',
+                weightValueSpan: 'lifestyleWeightValue',
+                name: '生活習慣',
+                defaultValue: 50,
+                defaultWeight: 5 // Changed from 7 to 5
+            },
+            stressLevel: {
+                slider: 'stressLevel',
+                valueSpan: 'stressLevelValue',
+                weightSlider: 'stressLevelWeight',
+                weightValueSpan: 'stressLevelWeightValue',
+                name: '壓力水平',
+                defaultValue: 50,
+                defaultWeight: 5 // Changed from 9 to 5
+            },
+            relationshipQuality: {
+                slider: 'relationshipQuality',
+                valueSpan: 'relationshipQualityValue',
+                weightSlider: 'relationshipQualityWeight',
+                weightValueSpan: 'relationshipQualityWeightValue',
+                name: '伴侶關係品質',
+                defaultValue: 50,
+                defaultWeight: 5 // Changed from 8 to 5
+            },
+            attractiveness: {
+                slider: 'attractiveness',
+                valueSpan: 'attractivenessValue',
+                weightSlider: 'attractivenessWeight',
+                weightValueSpan: 'attractivenessWeightValue',
+                name: '外貌吸引力',
+                defaultValue: 50,
+                defaultWeight: 5 // Changed from 6 to 5
+            },
+            bodyBuild: {
+                slider: 'bodyBuild',
+                valueSpan: 'bodyBuildValue',
+                weightSlider: 'bodyBuildWeight',
+                weightValueSpan: 'bodyBuildWeightValue',
+                name: '身材健壯程度',
+                defaultValue: 50,
+                defaultWeight: 5 // Changed from 6 to 5
+            }
+        };
+
+        const sexualFunctionScoreSpan = document.getElementById('sexualFunctionScore');
+        const sexualFunctionComment = document.getElementById('sexualFunctionComment');
+        const recalculateButton = document.getElementById('recalculateButton');
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+        // Function to update slider value display
+        function updateSliderValue(sliderId, spanId) {
+            document.getElementById(spanId).textContent = document.getElementById(sliderId).value;
+        }
+
+        // Function to set thumb color based on parent section's background color
+        function setThumbColor() {
+            for (const key in factorsConfig) {
+                if (factorsConfig.hasOwnProperty(key)) {
+                    const factor = factorsConfig[key];
+                    const sliderElement = document.getElementById(factor.slider);
+                    const weightSliderElement = document.getElementById(factor.weightSlider);
+
+                    const sectionContainer = sliderElement.closest('.section-container');
+                    if (sectionContainer) {
+                        const computedStyle = getComputedStyle(sectionContainer);
+                        const sectionBgColor = computedStyle.backgroundColor;
+                        sliderElement.style.setProperty('--thumb-color', sectionBgColor);
+                        weightSliderElement.style.setProperty('--thumb-color', sectionBgColor);
+                    }
+                }
+            }
+        }
+
+        // Function to calculate and display sexual function score with psychological interpretation
+        function calculateSexualFunction() {
+            let weightedSum = 0;
+            let totalWeight = 0;
+            let dominantFactor = null;
+            let maxWeightedValue = -1;
+
+            for (const key in factorsConfig) {
+                if (factorsConfig.hasOwnProperty(key)) {
+                    const factor = factorsConfig[key];
+                    const value = parseInt(document.getElementById(factor.slider).value);
+                    const weight = parseInt(document.getElementById(factor.weightSlider).value);
+
+                    const weightedValue = value * weight;
+                    weightedSum += weightedValue;
+                    totalWeight += weight;
+
+                    if (weightedValue > maxWeightedValue) {
+                        maxWeightedValue = weightedValue;
+                        dominantFactor = key;
+                    }
+                }
+            }
+
+            let score = 0;
+            if (totalWeight > 0) {
+                score = weightedSum / totalWeight;
+            } else {
+                score = 50; // Default if no weights are set
+            }
+
+            score = Math.max(0, Math.min(100, score));
+            sexualFunctionScoreSpan.textContent = Math.round(score);
+
+            let comment = "";
+            let dominantFactorName = dominantFactor ? factorsConfig[dominantFactor].name : '各因素';
+            let dominantFactorValue = dominantFactor ? parseInt(document.getElementById(factorsConfig[dominantFactor].slider).value) : 0;
+            let dominantFactorWeight = dominantFactor ? parseInt(document.getElementById(factorsConfig[dominantFactor].weightSlider).value) : 0;
+
+            if (score < 25) {
+                comment += `此分數指向一個深層的心理結構性脆弱，性功能「感知影響」的極度低落，猶如<strong class="text-red-600">靈魂深處的哀嚎</strong>，其迴響在<strong class="text-red-600">潛意識的幽谷</strong>中。這可能根植於<strong class="text-red-600">早期童年創傷，如嬰兒期的基本信任危機（Erik Erikson）</strong>，導致不安全的依戀模式（Bowlby & Ainsworth），或長期暴露於<strong class="text-red-600">世代壓榨的無力感</strong>中。個體的<strong class="text-red-600">本我（Id）</strong>可能被<strong class="text-red-600">超我（Superego）</strong>的嚴苛審查所壓抑，充滿了<strong class="text-red-600">被遺棄、被排擠的原始恐懼</strong>，導致對親密關係的本能性迴避與強烈表現焦慮。性，在此情境下，不再是連結與愉悅的源泉，反而成為<strong class="text-red-600">創傷重演或自我懲罰的場域</strong>，反映出根深蒂固的自我價值感崩塌與習得性無助。這是一種對親密連結的<strong class="text-red-600">深層防禦機制（Anna Freud）</strong>，源於對脆弱與被拒絕的極度恐懼。從<strong class="text-red-600">佛洛伊德（Sigmund Freud）</strong>的心理動力學角度來看，這可能是未解決的俄狄浦斯情結或早期口欲/肛欲期的固著在性領域的投射，導致<strong class="text-red-600">生命力（Libido）的枯竭</strong>。`;
+            } else if (score < 50) {
+                comment += `您的性功能「感知影響」處於中低水平，暗示著<strong class="text-orange-600">持續性的心理壓力與內在衝突，猶如心靈的枷鎖</strong>。這可能源於<strong class="text-orange-600">學習創傷（Seligman's Learned Helplessness）</strong>，即過去的失敗經驗在潛意識中刻下烙印；或是<strong class="text-orange-600">同儕排擠的陰影，以及被社會標籤化所內化的羞恥感（Goffman's Stigma）</strong>。個體可能存在<strong class="text-orange-600">認知扭曲（Aaron Beck）</strong>，過度關注性表現的潛在失敗，而非其內在的愉悅。這種狀態下，性慾與喚起可能受到<strong class="text-orange-600">負面自我對話和過度自我監控</strong>的抑制，親密關係中的自發性與連結感因此被削弱。這是一種<strong class="text-orange-600">焦慮驅動的迴避模式</strong>，在潛意識層面不斷尋求外部認可，卻又害怕再次受傷。從<strong class="text-orange-600">阿德勒（Alfred Adler）</strong>的個體心理學角度來看，這可能是自卑情結的體現，試圖透過避免失敗來維持虛假的優越感。這種<strong class="text-orange-600">社會比較理論（Social Comparison Theory, Leon Festinger）</strong>的負面效應，進一步加劇了內在的失衡。`;
+            } else if (score < 75) {
+                comment += `您的性功能「感知影響」處於中高水平，顯示出個體具有<strong class="text-green-600">良好的心理韌性與適應能力，猶如心靈的綠洲</strong>。儘管生命中可能經歷過挑戰（如輕微的同儕排擠或社會壓力），但其<strong class="text-green-600">健康的自我概念和相對安全的依戀模式</strong>，使其能夠有效處理壓力，並將性視為自我表達與情感連結的健康途徑。此狀態下，個體能較好地整合過去經驗，避免其對當前性功能產生顯著的負面影響，展現出<strong class="text-green-600">積極的自我效能感（Bandura's Self-Efficacy）</strong>。這反映了個體在心理層面的成長與成熟，如同<strong class="text-green-600">維克多·弗蘭克爾（Viktor Frankl）</strong>所闡述的，透過<strong class="text-green-600">意義追尋（Logotherapy）</strong>，將生存性焦慮轉化為成長的動力，實現<strong class="text-green-600">自我超越（Self-Transcendence）</strong>。`;
+            } else {
+                comment += `您的性功能「感知影響」評分極高，這不僅反映了外在因素的順遂，更是個體<strong class="text-blue-600">內在心靈的豐盛與整合（Jungian Individuation）</strong>。在心理層面，這意味著您已超越了基本需求，進入了<strong class="text-blue-600">自我實現（Maslow's Self-Actualization）</strong>的境界，能夠以最真實、最自信的自我投入親密關係。性，在此狀態下，不再是單純的生理驅力，而是<strong class="text-blue-600">生命能量（Libido，非弗洛伊德狹義）的自由流動與創造性表達</strong>，是靈魂與身體的和諧共鳴。您已然擺脫了童年陰影、學習創傷的束縛，甚至將社會標籤化與世代壓榨轉化為<strong class="text-blue-600">內在力量與韌性（Resilience）</strong>的證明。這是一種<strong class="text-blue-600">全然的、無拘無束的性存在體驗</strong>，如同在<strong class="text-blue-600">心流（Mihaly Csikszentmihalyi's Flow）</strong>狀態中，與伴侶達到靈肉合一的巔峰，展現出<strong class="text-blue-600">生命力的狂舞</strong>。從<strong class="text-blue-600">歐文·亞隆（Irvin Yalom）</strong>的存在主義心理治療視角來看，這代表了個體對自由、責任、孤獨和死亡的深刻領悟，進而擁抱生命的豐盛。`;
+            }
+
+            if (totalWeight > 0 && dominantFactor) {
+                comment += `<br><br>在您的權重設定下，其中「${dominantFactorName}」對整體評分的影響最為顯著。`;
+                if (dominantFactorValue < 50 && dominantFactorWeight > 5) {
+                     comment += ` 儘管該因素表現不佳，但其高權重如同<strong class="text-red-600">達摩克利斯之劍</strong>，懸於潛意識之上，可能透過<strong class="text-red-600">加劇心理壓力、降低自我效能感、觸發內在衝突或重現創傷模式</strong>，對您的感知帶來毀滅性的負面影響。這可能形成一個惡性循環，強化了根深蒂固的負面<strong class="text-red-600">認知圖式（Cognitive Schema）</strong>，阻礙了本能的生命力流動。`;
+                } else if (dominantFactorValue >= 50 && dominantFactorWeight > 5) {
+                    const positiveComments = [
+                        `該因素的良好表現及其高權重，猶如<strong class="text-blue-600">一道希望之光</strong>，穿透了潛意識的迷霧。它可能透過<strong class="text-blue-600">強化您的勝任感（Sense of Competence）與自我效能預期（Bandura's Self-Efficacy）</strong>，進而<strong class="text-blue-600">積極重塑您的內在工作模型（Internal Working Models，依戀理論）</strong>。這種正向回饋不僅<strong class="text-blue-600">鞏固了您的自我價值感</strong>，更為您在親密領域的探索提供了<strong class="text-blue-600">堅實的心理支撐</strong>，促使性功能感知向著更為<strong class="text-blue-600">自由、愉悅且無懼</strong>的方向發展。這是一種<strong class="text-blue-600">良性循環的啟動</strong>，讓您在性親密中體驗到更多的掌控與滿足。`,
+                        `該因素的良好表現及其高權重，如同<strong class="text-blue-600">心靈的黃金盔甲</strong>，為您的心理防禦系統增添了無比的韌性。它可能透過<strong class="text-blue-600">提升您的內在資源與應對機制（Coping Mechanisms）</strong>，使您能夠以更<strong class="text-blue-600">積極的態度面對挑戰</strong>。這種正向影響<strong class="text-blue-600">滋養了您的自我概念（Self-Concept）</strong>，讓您在性親密中感受到更深的<strong class="text-blue-600">安全感與歸屬感（Maslow's Needs Hierarchy）</strong>，從而<strong class="text-blue-600">激發出更為旺盛的生命力與創造力</strong>。`,
+                        `該因素的良好表現及其高權重，宛如<strong class="text-blue-600">一劑強效的心理催化劑</strong>，加速了您<strong class="text-blue-600">自我整合（Jungian Individuation）</strong>的進程。它可能透過<strong class="text-blue-600">促進內在各面向的和諧統一</strong>，使您在性親密中展現出<strong class="text-blue-600">更真實、更完整的自我</strong>。這種深層次的心理滋養，不僅<strong class="text-blue-600">消融了潛意識中的障礙</strong>，更為您開啟了通往<strong class="text-blue-600">巔峰體驗（Maslow's Peak Experiences）</strong>的大門，讓性成為<strong class="text-blue-600">超越個體、連結宇宙</strong>的形而上學體驗。`,
+                        `該因素的良好表現及其高權重，在您的心理圖景中繪製出<strong class="text-blue-600">一幅勝利的篇章</strong>。它不僅是外在的成功，更是<strong class="text-blue-600">內在獎勵系統（Reward System）的活化</strong>，強化了您對自身能力和價值的信念。這種深層次的肯定，將<strong class="text-blue-600">過去的負面條件反射（Pavlovian Conditioning）徹底顛覆</strong>，讓您在性親密中不再受制於習得性無助的陰影，反而能以<strong class="text-blue-600">積極的自我強化（Skinnerian Reinforcement）</strong>，創造出<strong class="text-blue-600">充滿活力與滿足感的性體驗</strong>。這是一種<strong class="text-blue-600">心理能量的爆發</strong>，引導您走向更為<strong class="text-blue-600">自由與豐盛的性存在</strong>。`,
+                        `該因素的良好表現及其高權重，如同<strong class="text-blue-600">一道照亮心靈的啟示</strong>，揭示了您<strong class="text-blue-600">內在潛能的無限可能</strong>。它透過<strong class="text-blue-600">強化您的內聚性自我（Cohesive Self, Heinz Kohut）</strong>，使您在面對親密關係時，能夠展現出更為<strong class="text-blue-600">堅實的自我結構與健康的自戀（Healthy Narcissism）</strong>。這種正向的心理建構，不僅<strong class="text-blue-600">消弭了內在的碎片化與不安全感</strong>，更為性功能的<strong class="text-blue-600">自發性與創造性表達</strong>鋪平了道路，讓您在親密連結中體驗到<strong class="text-blue-600">深層的共鳴與滿足</strong>。`
+                    ];
+                    let commentIndex = Math.floor(Math.random() * positiveComments.length); // Randomly select one
+                    comment += positiveComments[commentIndex];
+                }
+            } else if (totalWeight === 0) {
+                 comment += ` (請設定至少一個因素的權重以進行更精確的分析。)`;
+            }
+
+            sexualFunctionComment.innerHTML = comment; // Use innerHTML to render strong tags
+        }
+
+        // Add event listeners to all sliders
+        for (const key in factorsConfig) {
+            if (factorsConfig.hasOwnProperty(key)) {
+                const factor = factorsConfig[key];
+                document.getElementById(factor.slider).addEventListener('input', () => {
+                    updateSliderValue(factor.slider, factor.valueSpan);
+                    calculateSexualFunction();
+                });
+                document.getElementById(factor.weightSlider).addEventListener('input', () => {
+                    updateSliderValue(factor.weightSlider, factor.weightValueSpan);
+                    calculateSexualFunction();
+                });
+            }
+        }
+
+        // Event listener for the recalculate button
+        recalculateButton.addEventListener('click', () => {
+            // Reset all sliders (value and weight) to their middle/default values and update their display
+            for (const key in factorsConfig) {
+                if (factorsConfig.hasOwnProperty(key)) {
+                    const factor = factorsConfig[key];
+
+                    // Reset main value slider
+                    const valueSliderElement = document.getElementById(factor.slider);
+                    valueSliderElement.value = factor.defaultValue; // Reset value to default
+                    updateSliderValue(factor.slider, factor.valueSpan); // Update displayed value
+
+                    // Reset weight slider
+                    const weightSliderElement = document.getElementById(factor.weightSlider);
+                    weightSliderElement.value = factor.defaultWeight; // Reset weight to default
+                    updateSliderValue(factor.weightSlider, factor.weightValueSpan); // Update displayed weight value
+                }
+            }
+            calculateSexualFunction(); // Recalculate with reset values
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top smoothly
+        });
+
+        // Scroll to top button functionality
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 200) { // Show button after scrolling down 200px
+                scrollToTopBtn.classList.add('show');
+            } else {
+                scrollToTopBtn.classList.remove('show');
+            }
+        });
+
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Initial setup on page load
+        window.onload = function() {
+            for (const key in factorsConfig) {
+                if (factorsConfig.hasOwnProperty(key)) {
+                    const factor = factorsConfig[key];
+                    updateSliderValue(factor.slider, factor.valueSpan);
+                    updateSliderValue(factor.weightSlider, factor.weightValueSpan);
+                }
+            }
+            setThumbColor(); // Set initial thumb colors based on section backgrounds
+            calculateSexualFunction();
+        };
+    </script>
+</body>
+</html>
+
